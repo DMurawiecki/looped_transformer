@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from nano_gpt import GPT2Model, GPT2Config, LayerNorm
+# from nano_gpt import GPT2Model, GPT2Config, LayerNorm
 
 MAX_NUM_CLASS = 2  # for openML classification task
 
