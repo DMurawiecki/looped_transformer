@@ -2,7 +2,7 @@
 n_gpu=2
 
 # Linear Regression
-python scripts/train.py --config configs/base.yaml \
+python looped_transformer/scripts/train.py --config configs/base.yaml \
    --wandb.name "LR_baseline" \
    --gpu.n_gpu $n_gpu
 
