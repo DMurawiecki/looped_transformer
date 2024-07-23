@@ -1,16 +1,16 @@
-from quinine import (
-    tstring,
-    tinteger,
-    tfloat,
-    tboolean,
-    stdict,
-    tdict,
-    tlist,
-    default,
-    required,
-    allowed,
-    nullable,
-)
+# from quinine import (
+#     tstring,
+#     tinteger,
+#     tfloat,
+#     tboolean,
+#     stdict,
+#     tdict,
+#     tlist,
+#     default,
+#     required,
+#     allowed,
+#     nullable,
+# )
 from funcy import merge
 
 
