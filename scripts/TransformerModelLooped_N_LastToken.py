@@ -17,12 +17,12 @@ class TransformerModelLooped_N_LastTokens(TransformerModel):
     ############################################ new function
     def n_last_tokens(self, output, n):
         if self.loop_func == 'z=f(x+z)':
-            new_output = output[:, :n, :] 
-            zeros = torch.zeros_like(output[:, n:, :])
+            new_output = output[:, n:, :] 
+            zeros = torch.zeros_like(output[:, :n, :])
             return torch.cat((new_output, zeros), 1)
         elif self.loop_func == 'z=f(x*z)':
-            new_output = output[:, :n, :] 
-            zeros = torch.ones_like(output[:, n:, :])
+            new_output = output[:, n:, :] 
+            zeros = torch.ones_like(output[:, :n, :])
             return torch.cat((new_output, zeros), 1)
         else:
             raise NotImplementedError
