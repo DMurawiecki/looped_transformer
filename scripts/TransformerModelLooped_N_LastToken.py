@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from nano_gpt import GPT2Model, GPT2Config
 
 class TransformerModel(nn.Module):
     def __init__(self, n_dims, n_positions, n_embd=128, n_layer=12, n_head=4, pred_type='regression'):
