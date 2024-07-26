@@ -1,5 +1,6 @@
 import torch
 import yaml
+from curriculum import Curriculum
 
 def set_optim_scaler_curriculum_by_args(args_path, model):
   with open(args_path, 'r') as config_file:
