@@ -7,7 +7,7 @@ import torch
 import yaml
 
 from curriculum import Curriculum
-from schema import schema
+# from schema import schema
 from models import build_model
 from tasks import get_task_sampler
 from main_utils import init_device, get_run_id, load_pretrained_model
