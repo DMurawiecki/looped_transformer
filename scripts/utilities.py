@@ -1,3 +1,6 @@
+import torch
+import yaml
+
 def set_optim_scaler_curriculum_by_args(args_path):
   with open(args_path, 'r') as config_file:
     args = yaml.safe_load(config_file)
