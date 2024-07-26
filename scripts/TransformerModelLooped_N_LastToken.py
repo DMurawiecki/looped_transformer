@@ -96,10 +96,11 @@ class TransformerModelLooped_N_LastTokens(TransformerModel):
             raise NotImplementedError
         return f_output
      ############################################ new function
-    def n_last_tokens(self, output, n):
+     def n_last_tokens(self, output, n):
+        assert output.shape[1] >= n, "n should be smaller or equal to len(output)"
         if self.loop_func == 'z=f(x+z)':
-            new_output = output[:, n:, :]
-            zeros = torch.zeros_like(output[:, :n, :])
+            new_output = output[:, (output.shape[1] -n):, :]
+            zeros = torch.zeros_like(output[:, :(output.shape[1] -n), :])
             return torch.cat((new_output, zeros), 1)
         elif self.loop_func == 'z=f(x*z)':
             new_output = output[:, n:, :]
