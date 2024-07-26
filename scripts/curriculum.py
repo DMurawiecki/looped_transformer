@@ -7,13 +7,13 @@ class Curriculum:
         # inc denotes the change in n_dims,
         # this change is done every interval,
         # and start/end are the limits of the parameter
-        self.n_dims_truncated = args.dims.start
-        self.n_points = args.points.start
-        self.n_loops = args.loops.start
+        self.n_dims_truncated = args['dims']['start']
+        self.n_points = args['points']['start']
+        self.n_loops = args['loops']['start']
 
-        self.n_dims_schedule = args.dims
-        self.n_points_schedule = args.points
-        self.n_loops_schedule = args.loops
+        self.n_dims_schedule = args['dims']
+        self.n_points_schedule = args['points']
+        self.n_loops_schedule = args['loops']
         self.step_count = 0
 
     def update(self):
