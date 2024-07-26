@@ -1,6 +1,15 @@
 import torch
 from tasks import get_task_sampler
 
+
+torch.set_float32_matmul_precision('highest')
+torch.backends.cuda.matmul.allow_tf32 = True  # allow tf32 on matmul
+torch.backends.cudnn.allow_tf32 = True  # allow tf32 on cudnn
+dtype = 'float16'  # 'bfloat16', 'float32'
+ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torch.float16}[dtype]
+
+
+
 def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inputs_embeds):
     if args['model']['family'] in ['gpt2', 'gpt2_tying']:
         if ctx is not None:
@@ -41,6 +50,7 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
     norm_dict, total_norm = calculate_gradient_norm(model)
     optimizer.zero_grad(set_to_none=True)
     return loss.detach().cpu(), y_pred.detach(), total_norm, norm_dict
+
 
 
 def train_model(starting_step, ending_step, args, model, ctx, add_inputs_embeds, optimizer, curriculum, scaler):
