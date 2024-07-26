@@ -1,3 +1,6 @@
+import torch
+from tasks import get_task_sampler
+
 def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inputs_embeds):
     if args['model']['family'] in ['gpt2', 'gpt2_tying']:
         if ctx is not None:
