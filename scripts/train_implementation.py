@@ -6,7 +6,7 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
                 # list of [B, n], length K + 1, get rid of the 0-th one
                 loss = (ys - y_pred).square().mean()  # auto on both K and n (number of in context samples)
         else:
-            y_pred = model(xs, ys, add_inputs_embeds=add_inputs_embeds)  # [B, n] # ПОКА СТАВИМ ФОЛС
+            y_pred = model(xs, ys, add_inputs_embeds=add_inputs_embeds)  # [B, n] 
             # list of [B, n], length K + 1, get rid of the 0-th one
             loss = (ys - y_pred).square().mean()  # auto on both K and n (number of in context samples)
     elif args['model']['family'] in ['gpt2_loop']:
@@ -41,13 +41,7 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
 
 
 def train_model(starting_step, ending_step, args, model, ctx, add_inputs_embeds, optimizer, curriculum, scaler):
-
-  # torch.set_float32_matmul_precision('highest')
-  # torch.backends.cuda.matmul.allow_tf32 = True  # allow tf32 on matmul
-  # torch.backends.cudnn.allow_tf32 = True  # allow tf32 on cudnn
-  # dtype = 'float16'  # 'bfloat16', 'float32'
-  # ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torch.float16}[dtype]
-
+    
   if ctx:
     ctx = torch.amp.autocast(device_type='cuda', dtype=ptdtype, cache_enabled=False)
 
