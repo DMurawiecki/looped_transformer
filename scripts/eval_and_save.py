@@ -37,7 +37,8 @@ def evaluate_model(model, args, test_size, curriculum):
   plt.plot(test_losses, color = 'salmon')
   print('mean test loss: ', (sum(test_losses)/len(test_losses)).item())
 
-  def save_model(model, path):
+
+def save_model(model, path):
     training_state = {
                     "model_state_dict": model.state_dict(),
                     # "optimizer_state_dict": optimizer.state_dict(),
