@@ -38,10 +38,10 @@ def evaluate_model(model, args, test_size, curriculum):
   print('mean test loss: ', (sum(test_losses)/len(test_losses)).item())
 
   def save_model(model, path):
-  training_state = {
-                  "model_state_dict": model.state_dict(),
-                  # "optimizer_state_dict": optimizer.state_dict(),
-                  # "train_step": i,
-              }
-  torch.save(training_state, path)
-  print('your model was saved')
+    training_state = {
+                    "model_state_dict": model.state_dict(),
+                    # "optimizer_state_dict": optimizer.state_dict(),
+                    # "train_step": i,
+                }
+    torch.save(training_state, path)
+    print('your model was saved')
