@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
-from nano_gpt import GPT2Config, LayerNorm
+from nano_gpt import GPT2Config, LayerNorm, Block
+import math
 
 class GPT2Model(nn.Module):
 
@@ -51,7 +52,7 @@ class GPT2Model(nn.Module):
         elif isinstance(module, nn.Embedding):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
-    def forward(self, inputs_embeds, position_ids=None, rm_pos_embd=False, add_inputs_embeds=False, output_intermediate=False):
+    def forward(self, inputs_embeds, which_layer, position_ids=None, rm_pos_embd=False, add_inputs_embeds=False, output_intermediate=False):
         device = inputs_embeds.device
         b, t, d = inputs_embeds.size()
         assert t <= self.config.block_size, f"Cannot forward sequence of length {t}, block size is only {self.config.block_size}"
@@ -168,11 +169,11 @@ class TransformerModelLooped_AB(TransformerModel):
             n_dims, n_positions, n_embd, n_layer, n_head, pred_type)
         self.loop_func = loop_func
 
-    def f(self, output, embeds):
+    def f(self, output, embeds, which_layer):
         if self.loop_func == 'z=f(x+z)':
-            f_output = self._backbone(inputs_embeds=output + embeds)  # [B, 2n + 1, d]
+            f_output = self._backbone(inputs_embeds=output + embeds, which_layer=which_layer)  # [B, 2n + 1, d]
         elif self.loop_func == 'z=f(x*z)':
-            f_output = self._backbone(inputs_embeds=output * embeds)  # [B, 2n + 1, d]
+            f_output = self._backbone(inputs_embeds=output * embeds, which_layer=which_layer)  # [B, 2n + 1, d]
         else:
             raise NotImplementedError
         return f_output
@@ -200,9 +201,9 @@ class TransformerModelLooped_AB(TransformerModel):
         for idx in range(n_loops):
             if idx < n_loop_start:  # this will save memory when n_loops large.
                 with torch.no_grad():
-                    output = self.f(output, embeds)
+                    output = self.f(output, embeds, which_layer)
             else:
-                output = self.f(output, embeds)
+                output = self.f(output, embeds, which_layer)
                 prediction = self._read_out(output)  # [B, 2n, d] -> [B, 2n, 1]
                 if self._pred_type == 'regression':
                     y = prediction[:, self.ind::self.freq, 0]
@@ -219,16 +220,13 @@ class TransformerModelLooped_AB(TransformerModel):
             else:
                 which_layer = 'A'
         if which_layer == 'B':
-            output = self.f(output, embeds)
-                prediction = self._read_out(output)  # [B, 2n, d] -> [B, 2n, 1]
-                if self._pred_type == 'regression':
-                    y = prediction[:, self.ind::self.freq, 0]
-                elif self._pred_type == 'classification':
-                    y = prediction[:, self.ind::self.freq]
-                else:
-                    raise NotImplementedError
-                pred_list.append(y)
-            if not self.print_flag:
-                print(idx)
-                self.print_flag = True
+            output = self.f(output, embeds, which_layer)
+            prediction = self._read_out(output)  # [B, 2n, d] -> [B, 2n, 1]
+            if self._pred_type == 'regression':
+              y = prediction[:, self.ind::self.freq, 0]
+            elif self._pred_type == 'classification':
+              y = prediction[:, self.ind::self.freq]
+            else:
+              raise NotImplementedError
+            pred_list.append(y)
         return pred_list
