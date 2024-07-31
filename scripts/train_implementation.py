@@ -69,7 +69,7 @@ def train_model(starting_step, ending_step, args, model, ctx, add_inputs_embeds,
                     device=device)
 
     real_task = task_sampler()
-    xs, ys = real_task.xs.float().requires_grad_(True), real_task.ys.float().requires_grad_(True)
+    xs, ys = real_task.xs.float(), real_task.ys.float()
 
 
     loss, output, total_norm, grad_norm_dict = train_step(args= args,
