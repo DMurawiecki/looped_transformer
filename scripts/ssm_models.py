@@ -45,7 +45,7 @@ class SSM_TransformerModel(nn.Module):
         super(SSM_TransformerModel, self).__init__()
         self.freq = 2
         self.ind = 0
-        configuration = SSM_GPT2Config()
+        configuration = GPT2Config()
         configuration.block_size = self.freq * n_positions + 1
         configuration.n_layer = n_layer
         configuration.n_head = n_head
@@ -62,7 +62,7 @@ class SSM_TransformerModel(nn.Module):
         self._pred_type = pred_type
 
         self._read_in = nn.Linear(n_dims, n_embd)
-        self._backbone = GPT2Model(self.configuration)
+        self._backbone = SSM_GPT2Model(self.configuration)
         if self._pred_type == 'regression':
             self._read_out = nn.Linear(n_embd, 1)
         elif self._pred_type == 'classification':
