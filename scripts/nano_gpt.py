@@ -129,7 +129,7 @@ class SSM_Block(nn.Module):
         super().__init__()
         self.ln_1 = LayerNorm(config.n_embd, bias=config.bias)
         # self.attn = CausalSelfAttention(config)
-        self.ssm = SSM(in_features=config.n_embd, dt_rank=16, dim_inner=32, d_state=64)
+        self.ssm = SSM(in_features=config.n_embd, dt_rank=16, dim_inner=256, d_state=64)
         self.ln_2 = LayerNorm(config.n_embd, bias=config.bias)
         self.mlp = MLP(config)
 
