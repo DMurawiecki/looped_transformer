@@ -105,7 +105,7 @@ def train_model_new(starting_step, ending_step, args, model, ctx, add_inputs_emb
     # Track hyperparameters and run metadata
     config={
         "learning_rate": args['training']['learning_rate'],
-        "epochs": ending_step - strating_step
+        "epochs": ending_step - starting_step
     },
 )
   for i in pbar:
