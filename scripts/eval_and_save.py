@@ -3,7 +3,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import os
 
-def evaluate_model(model, args, test_size, curriculum):
+def evaluate_model(model, args, test_size=30, curriculum):
   task_sampler = get_task_sampler(
                       task_name=args['training']['task_name'],
                       batch_size=args['training']['batch_size'],
@@ -34,7 +34,7 @@ def evaluate_model(model, args, test_size, curriculum):
       point_wise_loss = (output - ys).square().mean(dim=0)
       loss = point_wise_loss.mean().detach().cpu()
       test_losses.append(loss)
-  return test_losses
+  return sum(test_losses)/len(test_losses)).item()
   # plt.plot(test_losses, color = 'salmon')
   # print('mean test loss: ', (sum(test_losses)/len(test_losses)).item())
 
