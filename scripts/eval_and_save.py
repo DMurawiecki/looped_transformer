@@ -3,7 +3,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import os
 
-def evaluate_model(model, args, test_size=30, curriculum):
+def evaluate_model(model, args, curriculum, test_size=30):
   task_sampler = get_task_sampler(
                       task_name=args['training']['task_name'],
                       batch_size=args['training']['batch_size'],
