@@ -49,46 +49,7 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
     return loss.detach().cpu(), y_pred.detach(), total_norm, norm_dict
 
 
-
-def train_model(starting_step, ending_step, args, model, ctx, add_inputs_embeds, optimizer, curriculum, scaler, device):
-  torch.set_float32_matmul_precision('highest')
-  torch.backends.cuda.matmul.allow_tf32 = True  # allow tf32 on matmul
-  torch.backends.cudnn.allow_tf32 = True  # allow tf32 on cudnn
-  dtype = 'float16'  # 'bfloat16', 'float32'
-  ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torch.float16}[dtype]  
-  if ctx:
-    ctx = torch.amp.autocast(device_type='cuda', dtype=ptdtype, cache_enabled=False)
-
-  model.train()
-  pbar = tqdm(range(starting_step, ending_step))
-  losses = []
-  for i in pbar:
-    task_sampler = get_task_sampler(
-                    task_name=args['training']['task_name'],
-                    batch_size=args['training']['batch_size'],
-                    n_points=curriculum.n_points,
-                    n_dims=args['model']['n_dims'],
-                    n_dims_truncated=curriculum.n_dims_truncated,
-                    device=device)
-
-    real_task = task_sampler()
-    xs, ys = real_task.xs.float(), real_task.ys.float()
-
-
-    loss, output, total_norm, grad_norm_dict = train_step(args= args,
-                                                          curriculum= curriculum,
-                                                          model= model,
-                                                          xs = xs,
-                                                          ys = ys,
-                                                          optimizer=optimizer,
-                                                          ctx= ctx,
-                                                          scaler= scaler,
-                                                          add_inputs_embeds= add_inputs_embeds)
-    losses.append(loss)
-
-  return losses
-
-def train_model_new(starting_step, ending_step, args, model, ctx, add_inputs_embeds, optimizer, curriculum, scaler, device, run_name):
+def train_model(starting_step, ending_step, args, model, ctx, add_inputs_embeds, optimizer, curriculum, scaler, device, run_name):
   torch.set_float32_matmul_precision('highest')
   torch.backends.cuda.matmul.allow_tf32 = True  # allow tf32 on matmul
   torch.backends.cudnn.allow_tf32 = True  # allow tf32 on cudnn
