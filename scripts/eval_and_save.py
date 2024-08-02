@@ -34,8 +34,9 @@ def evaluate_model(model, args, test_size, curriculum):
       point_wise_loss = (output - ys).square().mean(dim=0)
       loss = point_wise_loss.mean().detach().cpu()
       test_losses.append(loss)
-  plt.plot(test_losses, color = 'salmon')
-  print('mean test loss: ', (sum(test_losses)/len(test_losses)).item())
+  return test_losses
+  # plt.plot(test_losses, color = 'salmon')
+  # print('mean test loss: ', (sum(test_losses)/len(test_losses)).item())
 
 
 def save_model(model, path):
