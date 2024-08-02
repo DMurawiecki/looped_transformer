@@ -5,18 +5,18 @@ import os
 from tasks import get_task_sampler
 from main_utils import gen_dataloader
 
-def evaluate_model(model, args, curriculum, device, test_size=30):
-  task_sampler = get_task_sampler(
-                      task_name=args['training']['task_name'],
-                      batch_size=args['training']['batch_size'],
-                      n_points=curriculum.n_points,
-                      n_dims=args['model']['n_dims'],
-                      n_dims_truncated=curriculum.n_dims_truncated,
-                      device=device)
+def evaluate_model(model, args, curriculum, device, test_loader, test_size=30):
+  # task_sampler = get_task_sampler(
+  #                     task_name=args['training']['task_name'],
+  #                     batch_size=args['training']['batch_size'],
+  #                     n_points=curriculum.n_points,
+  #                     n_dims=args['model']['n_dims'],
+  #                     n_dims_truncated=curriculum.n_dims_truncated,
+  #                     device=device)
 
-  test_loader = gen_dataloader(task_sampler,
-                              test_size,
-                              args['training']['batch_size'])
+  # test_loader = gen_dataloader(task_sampler,
+  #                             test_size,
+  #                             args['training']['batch_size'])
   test_losses = []
 
   model.eval()
