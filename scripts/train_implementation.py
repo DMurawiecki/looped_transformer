@@ -3,7 +3,9 @@ from tasks import get_task_sampler
 from tqdm import tqdm
 from train import calculate_gradient_norm
 from eval_and_save import evaluate_model
+from main_utils import gen_dataloader
 import wandb
+
 
 def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inputs_embeds):
     if args['model']['family'] in ['gpt2', 'gpt2_tying']:
@@ -106,6 +108,18 @@ def train_model_new(starting_step, ending_step, args, model, ctx, add_inputs_emb
         "epochs": ending_step - starting_step
     },
 )
+
+  task_sampler = get_task_sampler(
+                      task_name=args['training']['task_name'],
+                      batch_size=args['training']['batch_size'],
+                      n_points=curriculum.n_points,
+                      n_dims=args['model']['n_dims'],
+                      n_dims_truncated=curriculum.n_dims_truncated,
+                      device=device)
+
+  test_loader = gen_dataloader(task_sampler,
+                              test_size,
+                              args['training']['batch_size'])
   for i in pbar:
     task_sampler = get_task_sampler(
                     task_name=args['training']['task_name'],
@@ -129,7 +143,7 @@ def train_model_new(starting_step, ending_step, args, model, ctx, add_inputs_emb
                                                           scaler= scaler,
                                                           add_inputs_embeds= add_inputs_embeds)
     losses_train.append(loss)
-    val_loss = evaluate_model(model= model, args= args, curriculum=curriculum, device=device)
+    val_loss = evaluate_model(model= model, args= args, curriculum=curriculum, device=device, test_loader=test_loader)
     losses_val.append(val_loss)
     wandb.log({"training loss": losses_train, 
                "validation loss": losses_val},
