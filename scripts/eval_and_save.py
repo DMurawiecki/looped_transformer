@@ -2,6 +2,7 @@ import torch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import os
+from tasks import get_task_sampler
 
 def evaluate_model(model, args, curriculum, test_size=30):
   task_sampler = get_task_sampler(
