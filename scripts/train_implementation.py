@@ -59,7 +59,6 @@ def train_model(starting_step, ending_step, args, model, ctx, add_inputs_embeds,
     ctx = torch.amp.autocast(device_type='cuda', dtype=ptdtype, cache_enabled=False)
 
   model.train()
-  pbar = tqdm(range(starting_step, ending_step))
   losses_train = []
   losses_val = []
   wandb.init(
@@ -81,7 +80,7 @@ def train_model(starting_step, ending_step, args, model, ctx, add_inputs_embeds,
   test_loader = gen_dataloader(task_sampler,
                               test_size,
                               args['training']['batch_size'])
-  for i in pbar:
+  for i in tqdm(range(starting_step, ending_step)):
     task_sampler = get_task_sampler(
                     task_name=args['training']['task_name'],
                     batch_size=args['training']['batch_size'],
