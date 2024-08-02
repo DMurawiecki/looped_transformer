@@ -6,23 +6,12 @@ from tasks import get_task_sampler
 from main_utils import gen_dataloader
 
 def evaluate_model(model, args, curriculum, device, test_loader):
-  # task_sampler = get_task_sampler(
-  #                     task_name=args['training']['task_name'],
-  #                     batch_size=args['training']['batch_size'],
-  #                     n_points=curriculum.n_points,
-  #                     n_dims=args['model']['n_dims'],
-  #                     n_dims_truncated=curriculum.n_dims_truncated,
-  #                     device=device)
-
-  # test_loader = gen_dataloader(task_sampler,
-  #                             test_size,
-  #                             args['training']['batch_size'])
   test_losses = []
 
   model.eval()
 
   with torch.no_grad():
-    for batch in tqdm(test_loader):
+    for batch in test_loader:
       xs, ys = batch['x'].to(device), batch['y'].to(device)
       if args['model']['family'] in ['gpt2']:
         output = model(xs, ys)  # [B,]
