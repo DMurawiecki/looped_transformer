@@ -116,9 +116,9 @@ def train_model_new(starting_step, ending_step, args, model, ctx, add_inputs_emb
                       n_dims=args['model']['n_dims'],
                       n_dims_truncated=curriculum.n_dims_truncated,
                       device=device)
-
+  test_size = 30
   test_loader = gen_dataloader(task_sampler,
-                              test_size=30,
+                              test_size,
                               args['training']['batch_size'])
   for i in pbar:
     task_sampler = get_task_sampler(
