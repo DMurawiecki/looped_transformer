@@ -145,8 +145,8 @@ def train_model_new(starting_step, ending_step, args, model, ctx, add_inputs_emb
     losses_train.append(loss)
     val_loss = evaluate_model(model= model, args= args, curriculum=curriculum, device=device, test_loader=test_loader)
     losses_val.append(val_loss)
-    wandb.log({"training loss": losses_train, 
-               "validation loss": losses_val},
+    wandb.log({"training loss": loss, 
+               "validation loss": val_loss},
                step = i)
 
   return losses_train, losses_val
