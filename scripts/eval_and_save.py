@@ -5,7 +5,7 @@ import os
 from tasks import get_task_sampler
 from main_utils import gen_dataloader
 
-def evaluate_model(model, args, curriculum, test_size=30, device):
+def evaluate_model(model, args, curriculum, device, test_size=30):
   task_sampler = get_task_sampler(
                       task_name=args['training']['task_name'],
                       batch_size=args['training']['batch_size'],
