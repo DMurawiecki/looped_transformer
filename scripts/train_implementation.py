@@ -100,9 +100,7 @@ def train_model_new(starting_step, ending_step, args, model, ctx, add_inputs_emb
   losses_train = []
   losses_val = []
   wandb.init(
-    # Set the project where this run will be logged
     project= run_name,
-    # Track hyperparameters and run metadata
     config={
         "learning_rate": args['training']['learning_rate'],
         "epochs": ending_step - starting_step
