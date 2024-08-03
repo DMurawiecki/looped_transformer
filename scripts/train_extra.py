@@ -4,8 +4,6 @@ from tqdm import tqdm
 from train import calculate_gradient_norm
 from eval_and_save import evaluate_model
 from main_utils import gen_dataloader
-
-
 import torch
 
 def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inputs_embeds):
