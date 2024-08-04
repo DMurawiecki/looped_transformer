@@ -23,14 +23,14 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
                 y_pred_list = model(xs, ys, horizon_start, n_loops)
                 y_pred_arr = torch.cat(y_pred_list, dim=0)  # [B * K, n]
                 y_star_arr = torch.cat([ys] * len(y_pred_list), dim=0)  # [B * K, n]
-                loss = (y_star_arr - y_pred_arr).abs().mean()  # change to MAELoss
+                loss = (y_star_arr - y_pred_arr).square().mean()  # change to MAELoss
                 y_pred = y_pred_list[-1]  # [B, n]
         else:
             horizon_start = max(0, n_loops - args['training']['n_loop_window'])
             y_pred_list = model(xs, ys, horizon_start, n_loops)
             y_pred_arr = torch.cat(y_pred_list, dim=0)  # [B * K, n]
             y_star_arr = torch.cat([ys] * len(y_pred_list), dim=0)  # [B * K, n]
-            loss = (y_star_arr - y_pred_arr).abs().mean()  # change to MAELoss
+            loss = (y_star_arr - y_pred_arr).square().mean()  # change to MAELoss
             y_pred = y_pred_list[-1]  # [B, n]
 
     if ctx is not None:
