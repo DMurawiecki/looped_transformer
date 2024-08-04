@@ -7,14 +7,15 @@ from main_utils import gen_dataloader
 import torch
 
 def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inputs_embeds):
+    loss_func = torch.nn.HuberLoss(reduction='mean', delta=1.0)
     if args['model']['family'] in ['gpt2', 'gpt2_tying']:
         if ctx is not None:
             with ctx:
                 y_pred = model(xs, ys, add_inputs_embeds=add_inputs_embeds)  # [B, n]
-                loss = torch.sqrt((torch.log1p(ys) - torch.log1p(y_pred)).square().mean())   # auto on both K and n (number of in context samples)
+                loss = loss_func(ys, y_pred)   # change to HuberLoss
         else:
             y_pred = model(xs, ys, add_inputs_embeds=add_inputs_embeds)  # [B, n]
-            loss = torch.sqrt((torch.log1p(ys) - torch.log1p(y_pred)).square().mean())  # auto on both K and n (number of in context samples)
+            loss = loss_func(ys, y_pred) # change to HuberLoss
     elif args['model']['family'] in ['gpt2_loop']:
         n_loops = curriculum.n_loops  # K
         if ctx is not None:
@@ -23,26 +24,22 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
                 y_pred_list = model(xs, ys, horizon_start, n_loops)
                 y_pred_arr = torch.cat(y_pred_list, dim=0)  # [B * K, n]
                 y_star_arr = torch.cat([ys] * len(y_pred_list), dim=0)  # [B * K, n]
-                loss = torch.sqrt((torch.log1p(ys) - torch.log1p(y_pred)).square().mean())   # change to MAELoss
+                loss = loss_func(ys, y_pred)   # change to HuberLoss
                 y_pred = y_pred_list[-1]  # [B, n]
         else:
             horizon_start = max(0, n_loops - args['training']['n_loop_window'])
             y_pred_list = model(xs, ys, horizon_start, n_loops)
             y_pred_arr = torch.cat(y_pred_list, dim=0)  # [B * K, n]
             y_star_arr = torch.cat([ys] * len(y_pred_list), dim=0)  # [B * K, n]
-            loss = torch.sqrt((torch.log1p(ys) - torch.log1p(y_pred)).square().mean())   # change to MAELoss
+            loss = loss_func(ys, y_pred)   # change to HuberLoss
             y_pred = y_pred_list[-1]  # [B, n]
 
     if ctx is not None:
         scaler.scale(loss).backward()
-        # Clip gradients
-        # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # Задайте max_norm по вашему усмотрению
         scaler.step(optimizer)
         scaler.update()
     else:
         loss.backward()
-        # Clip gradients
-        # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # Задайте max_norm по вашему усмотрению
         optimizer.step()
 
     norm_dict, total_norm = calculate_gradient_norm(model)
