@@ -19,8 +19,9 @@ def train_model_wandb(starting_step, ending_step, args, model, ctx, add_inputs_e
   model.train()
   losses_train = []
   losses_val = []
-  wandb.init(
+  run = wandb.init(
     project= run_name,
+    reinit=True
     config={
         "learning_rate": args['training']['learning_rate'],
         "epochs": ending_step - starting_step
@@ -66,5 +67,6 @@ def train_model_wandb(starting_step, ending_step, args, model, ctx, add_inputs_e
     wandb.log({"training loss": loss, 
                "validation loss": val_loss},
                step = i)
+  run.finish()
 
   return losses_train, losses_val
