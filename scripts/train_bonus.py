@@ -36,13 +36,13 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
     if ctx is not None:
         scaler.scale(loss).backward()
         # Clip gradients
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # Задайте max_norm по вашему усмотрению
+        # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # Задайте max_norm по вашему усмотрению
         scaler.step(optimizer)
         scaler.update()
     else:
         loss.backward()
         # Clip gradients
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # Задайте max_norm по вашему усмотрению
+        # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # Задайте max_norm по вашему усмотрению
         optimizer.step()
 
     norm_dict, total_norm = calculate_gradient_norm(model)
