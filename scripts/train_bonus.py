@@ -11,10 +11,10 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
         if ctx is not None:
             with ctx:
                 y_pred = model(xs, ys, add_inputs_embeds=add_inputs_embeds)  # [B, n]
-                loss = ((ys - y_pred).abs().mean())  # auto on both K and n (number of in context samples)
+                loss = torch.sqrt((torch.log1p(ys) - torch.log1p(y_pred)).square().mean())   # auto on both K and n (number of in context samples)
         else:
             y_pred = model(xs, ys, add_inputs_embeds=add_inputs_embeds)  # [B, n]
-            loss = ((ys - y_pred).abs().mean())  # auto on both K and n (number of in context samples)
+            loss = torch.sqrt((torch.log1p(ys) - torch.log1p(y_pred)).square().mean())  # auto on both K and n (number of in context samples)
     elif args['model']['family'] in ['gpt2_loop']:
         n_loops = curriculum.n_loops  # K
         if ctx is not None:
@@ -23,14 +23,14 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
                 y_pred_list = model(xs, ys, horizon_start, n_loops)
                 y_pred_arr = torch.cat(y_pred_list, dim=0)  # [B * K, n]
                 y_star_arr = torch.cat([ys] * len(y_pred_list), dim=0)  # [B * K, n]
-                loss = ((ys - y_pred).abs().mean())   # change to MAELoss
+                loss = torch.sqrt((torch.log1p(ys) - torch.log1p(y_pred)).square().mean())   # change to MAELoss
                 y_pred = y_pred_list[-1]  # [B, n]
         else:
             horizon_start = max(0, n_loops - args['training']['n_loop_window'])
             y_pred_list = model(xs, ys, horizon_start, n_loops)
             y_pred_arr = torch.cat(y_pred_list, dim=0)  # [B * K, n]
             y_star_arr = torch.cat([ys] * len(y_pred_list), dim=0)  # [B * K, n]
-            loss = ((ys - y_pred).abs().mean())  # change to MAELoss
+            loss = torch.sqrt((torch.log1p(ys) - torch.log1p(y_pred)).square().mean())   # change to MAELoss
             y_pred = y_pred_list[-1]  # [B, n]
 
     if ctx is not None:
