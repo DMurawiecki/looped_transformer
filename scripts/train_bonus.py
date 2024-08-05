@@ -24,15 +24,15 @@ def train_step(args, curriculum, model, xs, ys, optimizer, ctx, scaler, add_inpu
                 y_pred_list = model(xs, ys, horizon_start, n_loops)
                 y_pred_arr = torch.cat(y_pred_list, dim=0)  # [B * K, n]
                 y_star_arr = torch.cat([ys] * len(y_pred_list), dim=0)  # [B * K, n]
-                loss = loss_func(ys, y_pred)   # change to HuberLoss
                 y_pred = y_pred_list[-1]  # [B, n]
+                loss = loss_func(ys, y_pred)   # change to HuberLoss
         else:
             horizon_start = max(0, n_loops - args['training']['n_loop_window'])
             y_pred_list = model(xs, ys, horizon_start, n_loops)
             y_pred_arr = torch.cat(y_pred_list, dim=0)  # [B * K, n]
             y_star_arr = torch.cat([ys] * len(y_pred_list), dim=0)  # [B * K, n]
-            loss = loss_func(ys, y_pred)   # change to HuberLoss
             y_pred = y_pred_list[-1]  # [B, n]
+            loss = loss_func(ys, y_pred)   # change to HuberLoss
 
     if ctx is not None:
         scaler.scale(loss).backward()
