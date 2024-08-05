@@ -79,11 +79,11 @@ class TransformerModel(nn.Module):
         return y
 
 
-class TransformerModelLooped_N_LastTokens(TransformerModel):
+class TransformerModelLooped_N_LastToken(TransformerModel):
     def __init__(
             self, N, n_dims, n_positions, n_embd=128, n_layer=12, n_head=4, loop_func='z=f(x+z)', pred_type='regression'):
 
-        super(TransformerModelLooped_N_LastTokens, self).__init__(
+        super(TransformerModelLooped_N_LastToken, self).__init__(
             n_dims, n_positions, n_embd, n_layer, n_head, pred_type)
         self.loop_func = loop_func
         self.N = N
