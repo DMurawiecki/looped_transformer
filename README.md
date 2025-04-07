@@ -1,4 +1,4 @@
-# Тестовое LLM Foundations, Tinkoff Research (T-Lab)
+# Усовершенствование и некоторые эксперименты со статьей с ICLR 2024
 ## Looped Transformers are Better at Learning Learning Algorithms
 
 Данный код можно запустить просто загрузив любой ноутбук из pipelines в Google Colab или Kaggle Notebooks и проставив релевантные пути и исполнив ячейки по порядку.
